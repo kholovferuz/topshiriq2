@@ -102,12 +102,45 @@ public class StudentController {
         return delete ? "Student deleted" : "Student with this id is not found";
     }
 
-    // Read students for Ministry
+    // 1. VAZIRLIK
     @GetMapping("/forMinistry")
     public Page<Students> getStudentsForMinistry(@RequestParam int page){
         Pageable pageable= PageRequest.of(page,10);
         Page<Students> studentsPage = studentRepository.findAll(pageable);
         return studentsPage;
+    }
+    //2. UNIVERSITY
+    @GetMapping("/forUniversity/{universityId}")
+    public Page<Students> getStudentListForUniversity(@PathVariable Integer universityId,
+                                                     @RequestParam int page) {
+        //1-1=0     2-1=1    3-1=2    4-1=3
+        //select * from student limit 10 offset (0*10)
+        //select * from student limit 10 offset (1*10)
+        //select * from student limit 10 offset (2*10)
+        //select * from student limit 10 offset (3*10)
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Students> studentPage = studentRepository.findAllByGroup_Faculty_UniversityId(universityId, pageable);
+        return studentPage;
+    }
+
+    //3. FACULTY DEKANAT
+    @GetMapping("/forDekanat/{dekanatId}")
+    public Page<Students> getStudentListForDekanat(@PathVariable Integer dekanatId,
+                                                  @RequestParam int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Students> studentPage = studentRepository.findAllByGroup_FacultyId(dekanatId, pageable);
+        return studentPage;
+    }
+
+    //4. GROUP OWNER
+    @GetMapping("/forGroup/{groupId}")
+    public Page<Students> getStudentListForGroup(@PathVariable Integer groupId,
+                                                @RequestParam int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Students> studentPage = studentRepository.findAllByGroupId(groupId, pageable);
+        return studentPage;
     }
 }
 
